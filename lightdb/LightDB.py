@@ -33,6 +33,7 @@ class LightDB(dict):
     def __init__(self, location: str):
         super().__init__()
         self.location = location
+        print(self.load())
         self.update(**self.load())
 
     def __repr__(self):
@@ -89,7 +90,7 @@ class LightDB(dict):
         :return: The value of the item with the specified key
         """
 
-        return self.get(key, default)
+        return dict(self).get(key, default)
 
     def pop(self, key):
         """
@@ -103,7 +104,8 @@ class LightDB(dict):
         :return: The value of the removed item
         """
 
-        popped = self.pop(key)
+        popped = self.get(key)
+        del self[key]
         self.save()
         return popped
 
