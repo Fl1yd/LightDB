@@ -11,7 +11,7 @@ that allows you to **quickly** and **easily** write data to a file
 
 Installing
 ----------
-```shell
+```Shell
 pip3 install lightdb
 ```
 

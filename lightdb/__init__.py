@@ -10,4 +10,4 @@ from LightDB import LightDB
 
 from .LightDB import LightDB
 
-__version__ = "1.0"
+__version__ = "1.1"

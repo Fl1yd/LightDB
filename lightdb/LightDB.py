@@ -2,7 +2,7 @@ import os
 import json
 
 
-class LightDB(object):
+class LightDB(dict):
     """
     Light Database
     ~~~~~~~~~~~~~~
@@ -31,8 +31,12 @@ class LightDB(object):
     """
 
     def __init__(self, location: str):
+        super().__init__()
         self.location = location
-        self.db = self.load()
+        self.update(**self.load())
+
+    def __repr__(self):
+        return object.__repr__(self)
 
     def load(self):
         return (
@@ -43,7 +47,7 @@ class LightDB(object):
 
     def save(self):
         json.dump(
-            self.db, open(self.location, "w+"),
+            self, open(self.location, "w+"),
             ensure_ascii = False, indent = 4
         )
         return True
@@ -64,7 +68,7 @@ class LightDB(object):
         :return: True
         """
 
-        self.db[key] = value
+        self[key] = value
         return self.save()
 
     def get(self, key, default = None):
@@ -85,7 +89,7 @@ class LightDB(object):
         :return: The value of the item with the specified key
         """
 
-        return self.db.get(key, default)
+        return self.get(key, default)
 
     def pop(self, key):
         """
@@ -99,11 +103,10 @@ class LightDB(object):
         :return: The value of the removed item
         """
 
-        db = self.db.pop(key)
+        popped = self.pop(key)
         self.save()
-        return db
+        return popped
 
     def reset(self):
-        self.db = {}
-        self.save()
-        return True
+        self.clear()
+        return self.save()
