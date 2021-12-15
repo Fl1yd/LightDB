@@ -33,7 +33,6 @@ class LightDB(dict):
     def __init__(self, location: str):
         super().__init__()
         self.location = location
-        print(self.load())
         self.update(**self.load())
 
     def __repr__(self):
