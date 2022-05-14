@@ -117,4 +117,9 @@ class LightDB(dict):
         e[key2] = result
         self[key] = e
         return self.save()
-        
+
+    def getkey(self, key, key2, default=None):
+        try:
+            return dict(self).get(key, {})[key2]
+        except:
+            return default
