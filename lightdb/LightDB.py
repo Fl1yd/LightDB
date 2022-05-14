@@ -111,3 +111,10 @@ class LightDB(dict):
     def reset(self):
         self.clear()
         return self.save()
+    
+    def setkey(self, key, key2, result):
+        e = dict(self).get(key, {})
+        e[key2] = result
+        self[key] = e
+        return self.save()
+        
