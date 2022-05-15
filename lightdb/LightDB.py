@@ -157,6 +157,91 @@ class LightDB(dict):
         self.save()
         return popped
 
+    def set_key(
+        self, name: str, key: str, value: Union[str, int, float, list, dict]
+    ) -> bool:
+        """Set a key from a specific item
+
+        Params:
+            name (``str``):
+                The name of the item
+
+            key (``str``):
+                The keyname of the item you want to set
+
+            value (``str`` | ``int`` | ``float`` | ``list`` | ``dict``):
+                The value of the item you want to set
+
+        Returns:
+            bool
+
+        Usage:
+            >>> data = {
+                    "key1": "value1",
+                    "key2": [
+                        "value2",
+                        "value3",
+                        ...
+                    ],
+                    ...
+                }
+            >>> db.set("key3", data)
+            True
+            >>> db.set_key("key3", "key2", "value4")
+            True
+        """
+        self.setdefault(str(name), {})[str(key)] = value
+        return self.save()
+
+    def get_key(
+        self, name: str, key: str, default: Union[str, int, float, list, dict] = None
+    ) -> Dict[str, Union[str, int, float, list, dict]]:
+        """Get a key from a specific item
+
+        Params:
+            name (``str``):
+                The name of the item
+
+            key (``str``):
+                The keyname of the item you want to get
+
+            default (``str`` | ``int`` | ``float`` | ``list`` | ``dict``, optional):
+                The default value if the key doesn't exist
+
+        Returns:
+            The value of the item with the specified key
+
+        Usage:
+            >>> result = db.get_key("key3", "key2")
+            >>> result
+            ["value2", "value3"]
+        """
+        return self.get(name, {}).get(key, default)
+
+    def pop_key(
+        self, name: str, key: str
+    ) -> Dict[str, Union[str, int, float, list, dict]]:
+        """Pop a key from a specific item
+
+        Params:
+            name (``str``):
+                The name of the item
+
+            key (``str``):
+                The keyname of the item you want to pop
+
+        Returns:
+            The value of the item with the specified key
+
+        Usage:
+            >>> db.pop_key("key3", "key2")
+            ["value2", "value3"]
+        """
+        popped = self[str(name)][str(key)]
+        del self[str(name)][str(key)]
+        self.save()
+        return popped
+
     def reset(self) -> bool:
         """Reset database data"""
         self.clear()
