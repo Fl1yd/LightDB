@@ -65,7 +65,7 @@ class LightDB(dict):
             The data from the file
         """
         return (
-            json.load(open(self.location, "r"))
+            json.load(open(self.location, "r", encoding="utf-8"))
             if os.path.exists(self.location)
             else {}
         )
@@ -77,7 +77,7 @@ class LightDB(dict):
             bool
         """
         json.dump(
-            self, open(self.location, "w+"),
+            self, open(self.location, "w+", encoding="utf-8"),
             ensure_ascii=False, indent=4
         )
         return True
