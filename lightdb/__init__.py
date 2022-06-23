@@ -8,6 +8,6 @@ from LightDB import LightDB
 """
 
 __all__ = ["LightDB"]
-__version__ = "1.3.1"
+__version__ = "1.3.2"
 
 from .LightDB import LightDB
