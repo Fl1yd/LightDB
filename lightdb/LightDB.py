@@ -216,7 +216,7 @@ class LightDB(dict):
             >>> result
             ["value2", "value3"]
         """
-        return self.get(name, {}).get(key, default)
+        return self.get(name, {}).get(str(key), default)
 
     def pop_key(
         self, name: str, key: str
