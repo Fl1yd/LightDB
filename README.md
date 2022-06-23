@@ -43,4 +43,31 @@ print(db.get("key3"))
 # {"key1": "value1", "key2": ["value2", "value3"]}
 print(db.get("key4"))
 # ["value4", "value5"]
+
+# or POP:
+
+db.pop("key") # return popped key
+
+# SET KEY method:
+
+data = {
+    "key5": "value1",
+    "key6": "value2"
+}
+db.set_key("name", "key7", data)
+data = ["key8", "key9"]
+db.set_key("name", "key10", data)
+
+
+# or GET KEY:
+
+print(db.get_key("name", "key7"))
+# {"key5": "value1", "key6": "value2"}
+print(db.get_key("name", "key10"))
+# ["key8", "key9"]
+
+
+# or POP KEY:
+
+db.pop_key("name", "key") # return popped key
 </pre>
