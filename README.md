@@ -1,73 +1,83 @@
-<h1>LightDB</h1>
+<p align="center">
+    <img src="https://x0.at/ZmCv.png">
+    <br>
+    <b>LightDB</b>: Lightweight JSON Database for Python
+</p>
 
 
-<h2>What is this?</h2>
-
-LightDB is a lightweight JSON Database for Python
-that allows you to <b>quickly</b> and <b>easily</b> write data to a file
+<h1>What is this?</h1>
+LightDB is a simple and lightweight JSON database for Python that allows users to <b>efficiently</b> write data to a file. It is designed to be <b>easy to use</b>, making it a great choice for developers who need a fast and reliable way to store and retrieve data.
 
 
-<h2>Installing</h2>
+<h1>Installing</h1>
+
+You can install LightDB using pip:
 
 <pre lang="bash">
-pip3 install lightdb
+pip install lightdb
 </pre>
 
 
-<h2>How to use</h2>
+<h1>Usage</h1>
+
+To use LightDB, first import the <code>LightDB</code> class from the <code>lightdb</code> package:
 
 <pre lang="python">
 from lightdb import LightDB
-
-db = LightDB("/path/to/file.json") # or a non-existent file, it will be created automatically
-
-# SET method:
-
-data = {
-    "key1": "value1",
-    "key2": [
-        "value2",
-        "value3",
-        ...
-    ],
-    ...
-}
-db.set("key3", data)
-data = ["value4", "value5"]
-db.set("key4", data)
-
-
-# or GET:
-
-print(db.get("key3"))
-# {"key1": "value1", "key2": ["value2", "value3"]}
-print(db.get("key4"))
-# ["value4", "value5"]
-
-# or POP:
-
-db.pop("key") # return popped key
-
-# SET KEY method:
-
-data = {
-    "key5": "value1",
-    "key6": "value2"
-}
-db.set_key("name", "key7", data)
-data = ["key8", "key9"]
-db.set_key("name", "key10", data)
-
-
-# or GET KEY:
-
-print(db.get_key("name", "key7"))
-# {"key5": "value1", "key6": "value2"}
-print(db.get_key("name", "key10"))
-# ["key8", "key9"]
-
-
-# or POP KEY:
-
-db.pop_key("name", "key") # return popped key
 </pre>
+
+Then, create a <code>LightDB</code> object by passing in the path to a JSON file where the database will be stored:
+
+<pre lang="python">
+db = LightDB("my_database.json")
+</pre>
+
+You can then set key-value pairs in the database using the <code>set()</code> method:
+
+<pre lang="python">
+db.set("name", "Alice")
+db.set("age", 30)
+</pre>
+
+You can get the value associated with a key using the <code>get()</code> method:
+
+<pre lang="python">
+name = db.get("name")
+age = db.get("age")
+</pre>
+
+You can also remove a key-value pair using the <code>pop()</code> method:
+
+<pre lang="python">
+db.pop("age")
+</pre>
+
+To set a key-value pair in a nested dictionary in the database, use the <code>set_key()</code> method:
+
+<pre lang="python">
+db.set_key("user", "name", "Alice")
+db.set_key("user", "age", 30)
+</pre>
+
+You can get the value associated with a key in a nested dictionary using the <code>get_key()</code> method:
+
+<pre lang="python">
+name = db.get_key("user", "name")
+age = db.get_key("user", "age")
+</pre>
+
+You can also remove a key-value pair from a nested dictionary using the <code>pop_key()</code> method:
+
+<pre lang="python">
+db.pop_key("user", "age")
+</pre>
+
+To reset the database to an empty state, use the <code>reset()</code> method:
+
+<pre lang="python">
+db.reset()
+</pre>
+
+
+<h1>License</h1>
+LightDB is licensed under the MIT License.
