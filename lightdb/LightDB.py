@@ -1,44 +1,24 @@
 """The main file for the LightDB project.
 
-:copyright: (c) 2021-2022 by Fl1yd.
+:copyright: (c) 2021-2023 by Fl1yd.
 :license: MIT, see LICENSE for more details.
 """
 
-import os
 import json
 
-from typing import Union, Dict
+from pathlib import Path
+from typing import Dict, Any
 
 
 class LightDB(dict):
-    """Light DataBase
+    """Light Database
     ~~~~~~~~~~~~~~
 
-    `SET` method usage:
+    A lightweight database implemented as a dictionary with JSON file storage.
 
-        >>> from lightdb import LightDB
-        >>> db = LightDB("/path/to/file.json")  # or a non-existent file, it will be created automatically
-        >>> data = {
-                "key1": "value1",
-                "key2": [
-                    "value2",
-                    "value3",
-                    ...
-                ],
-                ...
-            }
-        >>> db.set("key3", data)
-        True
-        >>> data = ["value4", "value5"]
-        >>> db.set("key4", data)
-        True
-
-    ... or `GET`:
-
-        >>> db.get("key3")
-        {"key1": "value1", "key2": ["value2", "value3"]}
-        >>> db.get("key4")
-        ["value4", "value5"]
+    This class extends the built-in Python `dict` class to provide a simple and easy-to-use key-value store that
+    persists its data in a JSON file. The class provides methods to set, get, and remove individual key-value pairs
+    as well as nested dictionaries of key-value pairs.
     """
 
     def __init__(self, location: str) -> None:
@@ -46,203 +26,144 @@ class LightDB(dict):
 
         Params:
             location (``str``):
-                The location of the database file
+                The path to the JSON file where the database is stored
 
         Returns:
             None
         """
         super().__init__()
-        self.location = location
+        self.location = Path(location)
         self.update(**self._load())
 
     def __repr__(self) -> str:
         return object.__repr__(self)
 
-    def _load(self) -> Dict[str, Union[str, int, float, list, dict]]:
-        """Load the data from a file
+    def _load(self) -> Dict[str, Any]:
+        """Load the database from a JSON file
 
         Returns:
-            The data from the file
+            A dictionary containing the loaded key-value pairs
         """
-        return (
-            json.load(open(self.location, "r", encoding="utf-8"))
-            if os.path.exists(self.location)
-            else {}
-        )
+        if self.location.exists():
+            with self.location.open("r", encoding="utf-8") as file:
+                return json.load(file)
+        return {}
 
-    def save(self) -> bool:
-        """Save the current data to a file
+    def save(self) -> None:
+        """Save the current state of the database to a JSON file
 
         Returns:
-            bool
+            None
         """
-        json.dump(
-            self, open(self.location, "w+", encoding="utf-8"),
-            ensure_ascii=False, indent=4
-        )
-        return True
+        with self.location.open("w+", encoding="utf-8") as f:
+            json.dump(self, f, ensure_ascii=False, indent=4)
 
-    def set(
-        self, key: str, value: Union[str, int, float, list, dict]
-    ) -> bool:
-        """LightDB `SET` method
+    def set(self, key: str, value: Any) -> None:
+        """Set a key-value pair in the database
 
         Params:
             key (``str``):
-                The keyname of the item you want to set
+                The key to set
 
-            value (``str`` | ``int`` | ``float`` | ``list`` | ``dict``):
-                The value of the item you want to set
+            value (``Any``):
+                The value to associate with the key
 
         Returns:
-            bool
-
-        Usage:
-            >>> data = {
-                    "key1": "value1",
-                    "key2": [
-                        "value2",
-                        "value3"
-                    ]
-                }
-            >>> db.set("key3", data)
-            True
+            None
         """
         self[str(key)] = value
         return self.save()
 
-    def get(
-        self, key: str, default: Union[str, int, float, list, dict] = None
-    ) -> Dict[str, Union[str, int, float, list, dict]]:
-        """LightDB `GET` method
+    def get(self, key: str, default: Any = None) -> Dict[str, Any]:
+        """Get the value associated with a key from the database
 
         Params:
             key (``str``):
-                The keyname of the item you want to get
+                The key to retrieve
 
-            default (``str`` | ``int`` | ``float`` | ``list`` | ``dict``, optional):
-                The default value if the key doesn't exist
+            default (``Any``, optional):
+                The default value to return if the key doesn`t exist
 
         Returns:
-            The value of the item with the specified key
-
-        Usage:
-            >>> result = db.get("key3")
-            >>> result
-            {"key1": "value1", "key2": ["value2", "value3"]}
-            >>> result["key2"].remove("value3")
-            >>> result
-            {"key1": "value1", "key2": ["value2"]}
+            The value associated with the key, or the default value if the key doesn`t exist
         """
         return dict(self).get(str(key), default)
 
-    def pop(
-        self, key: str
-    ) -> Dict[str, Union[str, int, float, list, dict]]:
-        """LightDB `POP` method
+    def pop(self, key: str) -> Dict[str, Any]:
+        """Remove a key-value pair from the database
 
         Params:
             key (``str``):
-                The keyname of the item you want to pop
+                The key to remove
 
         Returns:
-            The value of the item with the specified key
-
-        Usage:
-            >>> db.pop("key1")
-            {"key1": "value1", "key2": ["value2", "value3"]}
+            The removed key-value pair
         """
         popped = self[str(key)]
         del self[str(key)]
         self.save()
         return popped
 
-    def set_key(
-        self, name: str, key: str, value: Union[str, int, float, list, dict]
-    ) -> bool:
-        """Set a key from a specific item
+    def set_key(self, name: str, key: str, value: Any) -> None:
+        """Set a key-value pair in a nested dictionary in the database
 
         Params:
             name (``str``):
-                The name of the item
+                The name of the nested dictionary
 
             key (``str``):
-                The keyname of the item you want to set
+                The key to set
 
-            value (``str`` | ``int`` | ``float`` | ``list`` | ``dict``):
-                The value of the item you want to set
+            value (``Any``):
+                The value to associate with the key
 
         Returns:
-            bool
-
-        Usage:
-            >>> data = {
-                    "key1": "value1",
-                    "key2": [
-                        "value2",
-                        "value3",
-                        ...
-                    ],
-                    ...
-                }
-            >>> db.set("key3", data)
-            True
-            >>> db.set_key("key3", "key2", "value4")
-            True
+            None
         """
         self.setdefault(str(name), {})[str(key)] = value
         return self.save()
 
-    def get_key(
-        self, name: str, key: str, default: Union[str, int, float, list, dict] = None
-    ) -> Dict[str, Union[str, int, float, list, dict]]:
-        """Get a key from a specific item
+    def get_key(self, name: str, key: str, default: Any = None) -> Dict[str, Any]:
+        """Get the value associated with a key in a nested dictionary in the database
 
         Params:
             name (``str``):
-                The name of the item
+                The name of the nested dictionary
 
             key (``str``):
-                The keyname of the item you want to get
+                The key to retrieve
 
-            default (``str`` | ``int`` | ``float`` | ``list`` | ``dict``, optional):
-                The default value if the key doesn't exist
+            default (``Any``, optional):
+                The default value to return if the key or the nested dictionary doesn`t exist
 
         Returns:
-            The value of the item with the specified key
-
-        Usage:
-            >>> result = db.get_key("key3", "key2")
-            >>> result
-            ["value2", "value3"]
+            The value associated with the key, or the default value if the key or the nested dictionary does not exist
         """
         return self.get(name, {}).get(str(key), default)
 
-    def pop_key(
-        self, name: str, key: str
-    ) -> Dict[str, Union[str, int, float, list, dict]]:
-        """Pop a key from a specific item
+    def pop_key(self, name: str, key: str) -> Dict[str, Any]:
+        """Remove a key-value pair from a nested dictionary in the database
 
         Params:
             name (``str``):
-                The name of the item
+                The name of the nested dictionary
 
             key (``str``):
-                The keyname of the item you want to pop
+                The key to remove
 
         Returns:
-            The value of the item with the specified key
-
-        Usage:
-            >>> db.pop_key("key3", "key2")
-            ["value2", "value3"]
+            The removed key-value pair
         """
-        popped = self[str(name)][str(key)]
-        del self[str(name)][str(key)]
+        popped = self[name][key]
+        del self[name][key]
         self.save()
         return popped
 
-    def reset(self) -> bool:
-        """Reset database data"""
+    def reset(self) -> None:
+        """Reset the database to an empty state
+
+        Returns:
+            None
+        """
         self.clear()
         return self.save()
