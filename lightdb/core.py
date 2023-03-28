@@ -1,8 +1,4 @@
-"""The main file for the LightDB project.
-
-:copyright: (c) 2021-2023 by Fl1yd.
-:license: MIT, see LICENSE for more details.
-"""
+"""A file that containing the main implementation of the LightDB database management system"""
 
 import json
 
