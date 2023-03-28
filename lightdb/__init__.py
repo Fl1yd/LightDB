@@ -1,6 +1,6 @@
 """See LightDB docstring:
 
-from LightDB import LightDB
+from lightdb import LightDB
 ---------------------
 
 :copyright: (c) 2021-2022 by Fl1yd.
@@ -10,4 +10,4 @@ from LightDB import LightDB
 __all__ = ["LightDB"]
 __version__ = "1.3.3"
 
-from .LightDB import LightDB
+from .core import LightDB
