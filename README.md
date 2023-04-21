@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://x0.at/ZmCv.png">
+    <img src="https://x0.at/Dzzm.png">
     <br>
     <b>LightDB</b>: Lightweight JSON Database for Python
 </p>
