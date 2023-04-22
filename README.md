@@ -52,26 +52,6 @@ You can also remove a key-value pair using the <code>pop()</code> method:
 db.pop("age")
 </pre>
 
-To set a key-value pair in a nested dictionary in the database, use the <code>set_key()</code> method:
-
-<pre lang="python">
-db.set_key("user", "name", "Alice")
-db.set_key("user", "age", 30)
-</pre>
-
-You can get the value associated with a key in a nested dictionary using the <code>get_key()</code> method:
-
-<pre lang="python">
-name = db.get_key("user", "name")
-age = db.get_key("user", "age")
-</pre>
-
-You can also remove a key-value pair from a nested dictionary using the <code>pop_key()</code> method:
-
-<pre lang="python">
-db.pop_key("user", "age")
-</pre>
-
 To reset the database to an empty state, use the <code>reset()</code> method:
 
 <pre lang="python">

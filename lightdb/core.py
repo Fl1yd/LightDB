@@ -3,7 +3,10 @@
 import json
 
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any, Dict, TypeVar, Union, overload
+
+_T = TypeVar("_T")
+_VT = TypeVar("_VT")
 
 
 class LightDB(dict):
@@ -13,9 +16,10 @@ class LightDB(dict):
     A lightweight database implemented as a dictionary with JSON file storage.
 
     This class extends the built-in Python `dict` class to provide a simple and easy-to-use key-value store that
-    persists its data in a JSON file. The class provides methods to set, get, and remove individual key-value pairs
-    as well as nested dictionaries of key-value pairs.
+    persists its data in a JSON file. The class provides methods to set, get, and remove individual key-value pairs.
     """
+
+    _current_db: "LightDB" = None
 
     def __init__(self, location: str) -> None:
         """Initialize the LightDB object
@@ -31,8 +35,25 @@ class LightDB(dict):
         self.location = Path(location)
         self.update(**self._load())
 
-    def __repr__(self) -> str:
-        return object.__repr__(self)
+        LightDB._current_db = self
+
+    @classmethod
+    def current(cls) -> "LightDB":
+        """Returns the current instance of the LightDB class
+
+        Raises:
+            ValueError:
+                If no current database has been set
+
+        Returns:
+            LightDB
+        """
+        if cls._current_db is None:
+            raise ValueError("No current database has been set")
+        return cls._current_db
+
+    def __str__(self) -> str:
+        return f"<LightDB: {self.location}>"
 
     def _load(self) -> Dict[str, Any]:
         """Load the database from a JSON file
@@ -40,10 +61,11 @@ class LightDB(dict):
         Returns:
             A dictionary containing the loaded key-value pairs
         """
-        if self.location.exists():
-            with self.location.open("r", encoding="utf-8") as file:
-                return json.load(file)
-        return {}
+        if not self.location.exists():
+            return {}
+
+        with self.location.open("r", encoding="utf-8") as file:
+            return json.load(file)
 
     def save(self) -> None:
         """Save the current state of the database to a JSON file
@@ -51,8 +73,8 @@ class LightDB(dict):
         Returns:
             None
         """
-        with self.location.open("w+", encoding="utf-8") as f:
-            json.dump(self, f, ensure_ascii=False, indent=4)
+        with self.location.open("w", encoding="utf-8") as file:
+            json.dump(self, file, ensure_ascii=False, indent=4)
 
     def set(self, key: str, value: Any) -> None:
         """Set a key-value pair in the database
@@ -67,10 +89,17 @@ class LightDB(dict):
         Returns:
             None
         """
-        self[str(key)] = value
-        return self.save()
+        self[key] = value
 
-    def get(self, key: str, default: Any = None) -> Dict[str, Any]:
+    @overload
+    def get(self, key: str) -> Union[_VT, _T]:
+        ...
+
+    @overload
+    def get(self, key: str, default: Union[_VT, _T]) -> Union[_VT, _T]:
+        ...
+
+    def get(self, key: str, default: Union[_VT, _T] = None) -> Union[_VT, _T]:
         """Get the value associated with a key from the database
 
         Params:
@@ -83,9 +112,9 @@ class LightDB(dict):
         Returns:
             The value associated with the key, or the default value if the key doesn`t exist
         """
-        return dict(self).get(str(key), default)
+        return super().get(key, default)
 
-    def pop(self, key: str) -> Dict[str, Any]:
+    def pop(self, key: str) -> Any:
         """Remove a key-value pair from the database
 
         Params:
@@ -95,65 +124,7 @@ class LightDB(dict):
         Returns:
             The removed key-value pair
         """
-        popped = self[str(key)]
-        del self[str(key)]
-        self.save()
-        return popped
-
-    def set_key(self, name: str, key: str, value: Any) -> None:
-        """Set a key-value pair in a nested dictionary in the database
-
-        Params:
-            name (``str``):
-                The name of the nested dictionary
-
-            key (``str``):
-                The key to set
-
-            value (``Any``):
-                The value to associate with the key
-
-        Returns:
-            None
-        """
-        self.setdefault(str(name), {})[str(key)] = value
-        return self.save()
-
-    def get_key(self, name: str, key: str, default: Any = None) -> Dict[str, Any]:
-        """Get the value associated with a key in a nested dictionary in the database
-
-        Params:
-            name (``str``):
-                The name of the nested dictionary
-
-            key (``str``):
-                The key to retrieve
-
-            default (``Any``, optional):
-                The default value to return if the key or the nested dictionary doesn`t exist
-
-        Returns:
-            The value associated with the key, or the default value if the key or the nested dictionary does not exist
-        """
-        return self.get(name, {}).get(str(key), default)
-
-    def pop_key(self, name: str, key: str) -> Dict[str, Any]:
-        """Remove a key-value pair from a nested dictionary in the database
-
-        Params:
-            name (``str``):
-                The name of the nested dictionary
-
-            key (``str``):
-                The key to remove
-
-        Returns:
-            The removed key-value pair
-        """
-        popped = self[name][key]
-        del self[name][key]
-        self.save()
-        return popped
+        return super().pop(key)
 
     def reset(self) -> None:
         """Reset the database to an empty state
@@ -161,5 +132,4 @@ class LightDB(dict):
         Returns:
             None
         """
-        self.clear()
-        return self.save()
+        return self.clear()

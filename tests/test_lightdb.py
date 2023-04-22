@@ -18,21 +18,10 @@ def test_set_get(db: LightDB):
     assert db.get("key1") == "value1"
 
 
-def test_set_nested_get_nested(db: LightDB):
-    db.set_key("nested_dict", "key1", "value1")
-    assert db.get_key("nested_dict", "key1") == "value1"
-
-
 def test_remove_key(db: LightDB):
     db.set("key1", "value1")
     db.pop("key1")
     assert db.get("key1") is None
-
-
-def test_remove_nested_key(db: LightDB):
-    db.set_key("nested_dict", "key1", "value1")
-    db.pop_key("nested_dict", "key1")
-    assert db.get_key("nested_dict", "key1") is None
 
 
 def test_default_value(db: LightDB):
