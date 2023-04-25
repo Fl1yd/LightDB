@@ -58,6 +58,12 @@ To reset the database to an empty state, use the <code>reset()</code> method:
 db.reset()
 </pre>
 
+After making the changes, you need to <code>save()</code>:
+
+<pre lang="python">
+db.save()
+</pre>
+
 
 <h1>License</h1>
 LightDB is licensed under the MIT License.

@@ -15,3 +15,6 @@ db.pop("name")
 
 # Reset the database to an empty state
 db.reset()
+
+# After this, you need to save changes
+db.save()
