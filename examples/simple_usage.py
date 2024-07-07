@@ -1,7 +1,7 @@
 from lightdb import LightDB
 
 # Create a new database object, or load an existing one from file
-db = LightDB("my_database.json")
+db = LightDB("db.json")
 
 # Set a key-value pair
 db.set("name", "Alice")

@@ -15,8 +15,9 @@ class LightDB(dict):
 
     A lightweight database implemented as a dictionary with JSON file storage.
 
-    This class extends the built-in Python `dict` class to provide a simple and easy-to-use key-value store that
-    persists its data in a JSON file. The class provides methods to set, get, and remove individual key-value pairs.
+    This class extends the built-in Python `dict` class to provide a simple and easy-to-use
+    key-value store that persists its data in a JSON file. The class provides methods to set, get,
+    and remove individual key-value pairs.
     """
 
     _current_db: "LightDB" = None
@@ -25,11 +26,7 @@ class LightDB(dict):
         """Initialize the LightDB object
 
         Params:
-            location (``str``):
-                The path to the JSON file where the database is stored
-
-        Returns:
-            None
+            location (``str``): The path to the JSON file where the database is stored
         """
         super().__init__()
         self.location = Path(location)
@@ -41,18 +38,17 @@ class LightDB(dict):
     def current(cls) -> "LightDB":
         """Returns the current instance of the LightDB class
 
-        Raises:
-            ValueError:
-                If no current database has been set
-
         Returns:
-            LightDB
+            ``LightDB``: An initialized instance of the LightDB
         """
         if cls._current_db is None:
             raise ValueError("No current database has been set")
         return cls._current_db
 
     def __str__(self) -> str:
+        return self.__repr__()
+
+    def __repr__(self) -> str:
         return f"<LightDB: {self.location}>"
 
     def _load(self) -> Dict[str, Any]:
@@ -68,11 +64,7 @@ class LightDB(dict):
             return json.load(file)
 
     def save(self) -> None:
-        """Save the current state of the database to a JSON file
-
-        Returns:
-            None
-        """
+        """Save the current state of the database to a JSON file"""
         with self.location.open("w", encoding="utf-8") as file:
             json.dump(self, file, ensure_ascii=False, indent=4)
 
@@ -80,14 +72,9 @@ class LightDB(dict):
         """Set a key-value pair in the database
 
         Params:
-            key (``str``):
-                The key to set
+            key (``str``): The key to set
 
-            value (``Any``):
-                The value to associate with the key
-
-        Returns:
-            None
+            value (``Any``): The value to associate with the key
         """
         self[key] = value
 
@@ -103,14 +90,12 @@ class LightDB(dict):
         """Get the value associated with a key from the database
 
         Params:
-            key (``str``):
-                The key to retrieve
+            key (``str``): The key to retrieve
 
-            default (``Any``, optional):
-                The default value to return if the key doesn`t exist
+            default (``Any``, optional): The default value to return if the key doesn`t exist
 
         Returns:
-            The value associated with the key, or the default value if the key doesn`t exist
+            ``_VT`` | ``_T``: The value associated with the key, or the default value if the key doesn`t exist
         """
         return super().get(key, default)
 
@@ -118,18 +103,13 @@ class LightDB(dict):
         """Remove a key-value pair from the database
 
         Params:
-            key (``str``):
-                The key to remove
+            key (``str``): The key to remove
 
         Returns:
-            The removed key-value pair
+            ``Any``: The removed key-value pair
         """
         return super().pop(key)
 
     def reset(self) -> None:
-        """Reset the database to an empty state
-
-        Returns:
-            None
-        """
+        """Reset the database"""
         return self.clear()

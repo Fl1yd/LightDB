@@ -4,19 +4,18 @@ LightDB
 What is this?
 -------------
 
-LightDB is a simple and lightweight JSON database for Python that allows users to efficiently write data to a file. It is designed to be easy to use, making it a great choice for developers who need a fast and reliable way to store and retrieve data.
+**LightDB** is a simple and lightweight JSON database for Python that allows users to **efficiently** write data to a file. It is designed to be **easy to use**, making it a great choice for developers who need a fast and reliable way to store and retrieve data
 
 
 Features
 --------
 
-- Lightweight: LightDB is a lightweight database that is implemented as a Python dictionary, making it simple and easy to use.
-- Simple API: LightDB provides a simple and intuitive API that allows users to easily set, get, and remove key-value pairs in the database.
-- JSON file storage: LightDB stores its data in a JSON file, making it easy to read and edit the database outside of the Python environment.
-- Persistance: LightDB's data is persisted in the JSON file, ensuring that it is retained between program runs.
-- Reset: LightDB provides a reset method that allows users to clear the database and start fresh.
-- Type agnostic: LightDB is type-agnostic, meaning it can store any Python object as a value in the database.
-- Portable: LightDB can be easily transferred between different systems, making it a great choice for simple data storage needs.
+- **Lightweight and Simple**: LightDB is a lightweight database implemented as a Python dictionary with an intuitive API for easy key-value management
+- **JSON Storage and Persistence**: Data is stored and retained in a JSON file, allowing easy external editing and persistence between runs
+- **Reset Capability**: Provides a reset method to clear the database and start fresh
+- **Type Agnostic**: Can store any Python object as a value
+- **Portable**: Easily transferable between systems, ideal for simple data storage
+- **Model Support**: Supports models for structured data management, ensuring organized and maintainable code
 
 
 Simple usage
@@ -25,12 +24,7 @@ Simple usage
 .. literalinclude:: ../../examples/simple_usage.py
 
 
-Contents
---------
+Models usage
+------------
 
-.. toctree::
-
-    api/index
-    installation
-    todo
-    license
+.. literalinclude:: ../../examples/models_usage.py

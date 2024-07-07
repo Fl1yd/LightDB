@@ -21,16 +21,15 @@ html_static_path = ["_static"]
 templates_path = ["_templates"]
 
 html_theme_options = {
-    "light_logo": "logo_light.png",
-    "dark_logo": "logo_dark.png",
+    "light_logo": "logo_light.svg",
+    "dark_logo": "logo_dark.svg",
 }
+
+master_doc = "toc"
+index_doc = "index"
 
 # Extensions
 extensions = [
     "sphinx.ext.autodoc",
-    "sphinx.ext.viewcode",
-    "sphinx.ext.todo"
+    "sphinx.ext.viewcode"
 ]
-
-# Parameters
-todo_include_todos = True
