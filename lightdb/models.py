@@ -27,7 +27,7 @@ class ModelMeta(type):
 
             attrs["__table__"] = table
 
-            if not attrs.get("__db__"):
+            if attrs.get("__db__") is None:
                 attrs["__db__"] = LightDB.current()
 
             annotations: Dict[str, Any] = attrs.get("__annotations__", {})
@@ -156,11 +156,11 @@ class Model(metaclass=ModelMeta):
     def delete(self) -> None:
         """Deletes the current instance of the model from the database"""
         rows = self.__db__.get(self.__table__, [])
+        updated_rows = [item for item in rows if item["_id"] != self._fields_map["_id"].value]
 
-        for item in rows:
-            if item["_id"] == self._fields_map["_id"].value:
-                rows.remove(item)
-                self.__db__.save()
+        if len(updated_rows) != len(rows):
+            self.__db__[self.__table__] = updated_rows
+            self.__db__.save()
 
     @classmethod
     def filter(cls: Type[MODEL], *args, **kwargs) -> List[MODEL]:

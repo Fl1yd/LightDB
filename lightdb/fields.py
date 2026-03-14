@@ -1,6 +1,6 @@
 """A file containing the implementation of the Field class for data validation and storage"""
 
-from typing import Any, List, Dict, Optional, get_origin, get_args, TYPE_CHECKING
+from typing import Any, List, Dict, Optional, Union, get_origin, get_args, TYPE_CHECKING
 
 from .exceptions import ValidationError
 from .query import Condition
@@ -22,7 +22,7 @@ class Field:
         """Initializes a new instance of the field with the provided arguments
 
         Params:
-            annotation (``str``, optional): The name of the field
+            name (``str``, optional): The name of the field
 
             annotation (``Any``, optional): The type of the field
 
@@ -55,7 +55,33 @@ class Field:
         origin = get_origin(expected_type)
         args = get_args(expected_type)
 
-        if origin is None:
+        # Handle Union types (including Optional[X] which is Union[X, None])
+        if origin is Union:
+            non_none_args = [a for a in args if a is not type(None)]
+            if value is None and type(None) in args:
+                return
+            for allowed_type in non_none_args:
+                allowed_origin = get_origin(allowed_type)
+                if allowed_origin is None:
+                    if isinstance(value, allowed_type):
+                        return
+                else:
+                    # Recurse into nested generic type inside the Union
+                    inner_field = Field(name=self.name, annotation=allowed_type)
+                    try:
+                        inner_field.validate(value)
+                        return
+                    except ValidationError:
+                        pass
+            allowed_names = " | ".join(
+                getattr(a, "__name__", str(a)) for a in non_none_args
+            )
+            raise ValidationError(
+                f"Expected value of type `{allowed_names}` for field `{self.name}`, "
+                f"got `{type(value).__name__}`"
+            )
+
+        elif origin is None:
             if not isinstance(value, expected_type):
                 raise ValidationError(f"Expected value of type `{expected_type.__name__}` for field `{self.name}`, got `{type(value).__name__}`")
 
