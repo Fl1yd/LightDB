@@ -68,3 +68,37 @@ def test_model_all(user_model: MODEL):
     
     results = user_model.all()
     assert len(results) == 2
+
+
+def test_model_delete_correct_entry(user_model: MODEL):
+    john = user_model.create(name="John", age=30)
+    jane = user_model.create(name="Jane", age=25)
+    john.delete()
+
+    remaining = user_model.all()
+    assert len(remaining) == 1
+    assert remaining[0].name == "Jane"
+
+
+def test_model_optional_field():
+    import os
+    from typing import Optional
+
+    test_db_location = "test_optional_db.json"
+    from lightdb.core import LightDB
+
+    db = LightDB(test_db_location)
+
+    class Profile(Model, table="profiles"):
+        username: str
+        bio: Optional[str] = None
+
+    try:
+        p = Profile.create(username="Alice")
+        assert p.bio is None
+
+        p2 = Profile.create(username="Bob", bio="Hello!")
+        assert p2.bio == "Hello!"
+    finally:
+        if os.path.exists(test_db_location):
+            os.remove(test_db_location)

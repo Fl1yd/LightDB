@@ -34,6 +34,18 @@ class LightDB(dict):
 
         LightDB._current_db = self
 
+    def __enter__(self) -> "LightDB":
+        """Support usage as a context manager
+
+        Returns:
+            ``LightDB``: The database instance
+        """
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        """Save the database when exiting the context manager"""
+        self.save()
+
     @classmethod
     def current(cls) -> "LightDB":
         """Returns the current instance of the LightDB class
@@ -65,6 +77,7 @@ class LightDB(dict):
 
     def save(self) -> None:
         """Save the current state of the database to a JSON file"""
+        self.location.parent.mkdir(parents=True, exist_ok=True)
         with self.location.open("w", encoding="utf-8") as file:
             json.dump(self, file, ensure_ascii=False, indent=4)
 
@@ -99,16 +112,28 @@ class LightDB(dict):
         """
         return super().get(key, default)
 
+    @overload
     def pop(self, key: str) -> Any:
+        ...
+
+    @overload
+    def pop(self, key: str, default: Any) -> Any:
+        ...
+
+    def pop(self, key: str, *args) -> Any:
         """Remove a key-value pair from the database
 
         Params:
             key (``str``): The key to remove
 
+            default (``Any``, optional): The value to return if the key doesn`t exist.
+                If not provided and the key is missing, a ``KeyError`` is raised.
+
         Returns:
-            ``Any``: The removed key-value pair
+            ``Any``: The value associated with the removed key, or ``default`` if the key
+                doesn`t exist and a default was provided
         """
-        return super().pop(key)
+        return super().pop(key, *args)
 
     def reset(self) -> None:
         """Reset the database"""
